@@ -1,0 +1,52 @@
+
+<% if user_signed_in? %>
+  <!-- ログインしている場合の表示 -->
+  <%= link_to "ログアウト", destroy_user_session_path, method: :delete %>
+<% end %>
+
+
+<% if user_signed_in? %>
+  <%= link_to "管理者", new_post_path, class: "button-link" %>
+<% end %>
+
+
+<%= form_tag posts_path, method: :get, class: 'form-inline' do %>
+  <div class="input-group">
+    <%= text_field_tag :search, params[:search], placeholder: 'Search posts...', class: 'form-control' %>
+    <div class="input-group-append">
+      <%= submit_tag 'Search', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>
+
+<section class="text-gray-600 body-font">
+  <div class="container px-5 py-24 mx-auto">
+    <div class="flex flex-wrap w-full mb-20">
+      <div class="lg:w-1/2 w-full mb-6 lg:mb-0">
+      </div>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <% @posts.each do |post| %>
+        <% if post.image.attached? %>
+          <div class="bg-gray-100 p-6 rounded-lg">
+            <a href="<%= post_path(post) %>">
+              <%= image_tag post.image, class: "h-40 rounded w-full object-cover object-center mb-6", alt: "content" %>
+              <h2 class="text-lg text-gray-900 font-medium title-font mb-4"><%= post.title %></h2>
+            </a>
+            <!-- ログインしている場合にのみ編集リンクを表示 -->
+            <% if user_signed_in? %>
+              <a href="<%= edit_post_path(post) %>" class="text-blue-500">Edit</a>
+            <% end %>
+            <% if user_signed_in? %>
+            <%= button_to "削除", post_path(post), method: :delete, data: { confirm: "本当に削除しますか？" }, class: "btn btn-danger animated shake danger" %>
+            <% end %>
+
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+
+  <%== pagy_bootstrap_nav(@pagy) %>
